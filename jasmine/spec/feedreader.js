@@ -54,7 +54,7 @@ $(function() {
          * hidden by default. 
          */
         it('menu element is hidden by default', function() {
-           expect($(document.body).hasClass('menu-hidden')).toBeTruthy();
+           expect($(document.body).hasClass('menu-hidden')).toBe(true);
         });
 
          /* Test ensures the menu changes
@@ -64,10 +64,10 @@ $(function() {
           */
         it('menu changes visibility after clicking the icon', function() {
             $('.menu-icon-link').click();
-            expect($(document.body).hasClass('menu-hidden')).toBeFalsy();
+            expect($(document.body).hasClass('menu-hidden')).toBe(false);
 
             $('.menu-icon-link').click();
-            expect($(document.body).hasClass('menu-hidden')).toBeTruthy();
+            expect($(document.body).hasClass('menu-hidden')).toBe(true);
         });
     });      
 
@@ -79,13 +79,13 @@ $(function() {
          * a single .entry element within the .feed container.
          */
         beforeEach(function(done) {
-            loadFeed(0, done());
+            loadFeed(0, done);
         }); 
 
-        it('loads at least one feed', function(){
-            expect($('.feed').length).not.toBe(0);
-        });
-    }); 
+        it('loads at least one feed', function() {
+           expect($('.feed .entry').length).toBeGreaterThan(0);
+         });
+    });
 
 
     describe('New Feed Selection', function() {
@@ -94,14 +94,22 @@ $(function() {
          * by the loadFeed function that the content actually changes.
          */
         let firstFeed;
-
-        beforeEach(function(done) {
-            firstFeed = loadFeed(0, done());
-            loadFeed(1, done());
-        }); 
+        let secondFeed;
          
-        it('changes the content after loading new feed', function(){
-            expect($('.feed')).not.toBe(firstFeed);
-        }); 
+        beforeEach(function (done) {
+            loadFeed(0, function () {
+                firstFeed = $('.feed').html();
+
+                loadFeed(1, function () {
+                    secondFeed = $('.feed').html();
+                    done();
+                });
+            });
+        });
+        
+        it('changes the content after loading new feed', function() {
+            expect(secondFeed).not.toBe(firstFeed);
+        });
     }); 
+
 }());
